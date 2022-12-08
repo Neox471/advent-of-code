@@ -1,7 +1,7 @@
-# Set score to 0
-score = 0
+# Read file input and split each line
+input = File.read("advent-of-code_input.txt").split("\n")
 # Define how much score each letter is worth
-letter_scores = {
+LETTER_SCORES = {
   'a' => 1,
   'b' => 2,
   'c' => 3,
@@ -55,21 +55,55 @@ letter_scores = {
   'Y' => 51,
   'Z' => 52, 
 }
-# Read file input and split each line
-input = File.read("advent-of-code_input.txt").split("\n")
+def answer_1(input)
+score = 0
 # Each line represents a rucksack so we iterate trough each rucksack
-input.each do |rucksack|
-    # Calculate half of each rucksack and build first and second compartment from it
-    half = (rucksack.length / 2)
-    first_compartment = rucksack[0..half-1]
-    second_compartment = rucksack[half..rucksack.length]
-    # Iterate each letter in first compartment and look if it is included in second compartment
-    first_compartment.split('').each do |letter|
-        if second_compartment.include?(letter)
-            score += letter_scores[letter]
+    input.each do |rucksack|
+        # Calculate half of each rucksack and build first and second compartment from it
+        half = (rucksack.length / 2)
+        first_compartment = rucksack[0..half-1]
+        second_compartment = rucksack[half..rucksack.length]
+        # Iterate each letter in first compartment and look if it is included in second compartment
+        first_compartment.split('').each do |letter|
+            if second_compartment.include?(letter)
+                score += LETTER_SCORES[letter]
 
-            break
+                break
+            end
         end
     end
+p "Score acording to task 1: #{score}"
 end
-puts score
+
+def answer_2(input)
+group_of_three = []
+groups = []
+i = 0
+score = 0
+input.each_with_index do |example, index|
+    if i < 3
+        group_of_three = group_of_three.push(example)
+        i += 1
+        if index == input.size - 1
+            groups = groups.push(group_of_three)
+        end
+    elsif i == 3
+        groups = groups.push(group_of_three)
+        i = 1
+        group_of_three = []
+        group_of_three = group_of_three.push(example)
+    end
+end
+    groups.each do |group|
+        group.first().split('').each do |letter|
+            if group[1].include?(letter) && group[2].include?(letter)
+                score += LETTER_SCORES[letter]
+
+                break
+            end
+        end
+    end
+p "Score acording to task 2: #{score}"
+end
+answer_1(input)
+answer_2(input)
